@@ -20,6 +20,9 @@ namespace TexturedCube.Shaders
         [ResourceSet(1)]
         public SamplerResource SurfaceSampler;
 
+        [ResourceSet(1)]
+        public float Opacity;
+
         [VertexShader]
         public FragmentInput VS(VertexInput input)
         {
@@ -36,7 +39,7 @@ namespace TexturedCube.Shaders
         [FragmentShader]
         public Vector4 FS(FragmentInput input)
         {
-            return Sample(SurfaceTexture, SurfaceSampler, input.TexCoords);
+            return Sample(SurfaceTexture, SurfaceSampler, input.TexCoords) * Opacity;
         }
 
         public struct VertexInput

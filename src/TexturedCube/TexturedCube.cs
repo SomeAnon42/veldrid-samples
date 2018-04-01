@@ -22,6 +22,9 @@ namespace TexturedCube
         private Pipeline _pipeline;
         private ResourceSet _projViewSet;
         private ResourceSet _worldTextureSet;
+
+        private DeviceBuffer _constantBuffer;
+        private AnimationState _animationState;
         private float _ticks;
 
         protected override void CreateResources(ResourceFactory factory)
@@ -70,7 +73,8 @@ namespace TexturedCube
                 new ResourceLayoutDescription(
                     new ResourceLayoutElementDescription("World", ResourceKind.UniformBuffer, ShaderStages.Vertex),
                     new ResourceLayoutElementDescription("SurfaceTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
-                    new ResourceLayoutElementDescription("SurfaceSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
+                    new ResourceLayoutElementDescription("SurfaceSampler", ResourceKind.Sampler, ShaderStages.Fragment),
+                    new ResourceLayoutElementDescription("Opacity", ResourceKind.UniformBuffer, ShaderStages.Fragment)));
 
             _pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
                 BlendStateDescription.SingleOverrideBlend,
@@ -86,16 +90,29 @@ namespace TexturedCube
                 _projectionBuffer,
                 _viewBuffer));
 
+            _constantBuffer = factory.CreateBuffer(new BufferDescription(16, BufferUsage.UniformBuffer));
+
             _worldTextureSet = factory.CreateResourceSet(new ResourceSetDescription(
                 worldTextureLayout,
                 _worldBuffer,
                 _surfaceTextureView,
-                _gd.Aniso4xSampler));
+                _gd.Aniso4xSampler,
+                _constantBuffer));
+
+            _animationState = new AnimationState
+            {
+                InitialValue = 0.0f,
+                FinalValue = 1.0f,
+                Duration = 3.0f
+            };
         }
 
         protected override void Draw(float deltaSeconds)
         {
             _ticks += deltaSeconds * 1000f;
+
+            AdvanceAnimation(deltaSeconds);
+
             _cl.Begin();
 
             _cl.UpdateBuffer(_projectionBuffer, 0, Matrix4x4.CreatePerspectiveFieldOfView(
@@ -125,6 +142,36 @@ namespace TexturedCube
             _cl.End();
             _gd.SubmitCommands(_cl);
             _gd.SwapBuffers();
+        }
+
+        private void AdvanceAnimation(float deltaSeconds)
+        {
+            _animationState.Elapsed += deltaSeconds;
+            float newValue = _animationState.Value;
+
+            _gd.UpdateBuffer(_constantBuffer, 0, ref newValue);
+        }
+
+        class AnimationState
+        {
+            public float InitialValue;
+            public float FinalValue;
+            public float Duration;
+            public float Elapsed;
+
+            public float Progress => Clamp(Elapsed / Duration, 0, 1);
+            public float Value => Lerp();
+
+            private float Lerp()
+            {
+                float delta = FinalValue - InitialValue;
+                return InitialValue + delta * Progress;
+            }
+
+            private static float Clamp(float value, float min, float max)
+            {
+                return value < min ? min : value > max ? max : value;
+            }
         }
 
         private static VertexPositionTexture[] GetCubeVertices()
