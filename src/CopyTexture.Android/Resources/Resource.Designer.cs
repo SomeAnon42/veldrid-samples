@@ -9,9 +9,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::Android.Runtime.ResourceDesignerAttribute("Cubemaps.Android.Resource", IsApplication=true)]
+[assembly: global::Android.Runtime.ResourceDesignerAttribute("CopyTexture.Android.Resource", IsApplication=true)]
 
-namespace Cubemaps.Android
+namespace CopyTexture.Android
 {
 	
 	

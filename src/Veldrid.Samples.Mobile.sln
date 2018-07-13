@@ -52,7 +52,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComputeParticles.iOS", "Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComputeTexture.iOS", "ComputeTexture\iOS\ComputeTexture.iOS.csproj", "{8463180A-F3BA-43B3-A953-7F6D63F78287}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cubemaps.Android", "Cubemaps.Android\Cubemaps.Android.csproj", "{41272449-2016-47D4-9ED6-0B76994DA6EE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopyTexture.Android", "CopyTexture.Android\CopyTexture.Android.csproj", "{41272449-2016-47D4-9ED6-0B76994DA6EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
